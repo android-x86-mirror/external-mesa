@@ -576,7 +576,7 @@ _mesa_get_texture_dimensions(GLenum target)
    case GL_PROXY_TEXTURE_2D_MULTISAMPLE_ARRAY:
       return 3;
    case GL_TEXTURE_BUFFER:
-      /* fall-through */
+      FALLTHROUGH;
    default:
       _mesa_problem(NULL, "invalid target 0x%x in get_texture_dimensions()",
                     target);
@@ -2099,7 +2099,7 @@ compressed_texture_error_check(struct gl_context *ctx, GLint dimensions,
    /* No compressed formats support borders at this time */
    if (border != 0) {
       reason = "border != 0";
-      error = GL_INVALID_VALUE;
+      error = _mesa_is_desktop_gl(ctx) ? GL_INVALID_OPERATION : GL_INVALID_VALUE;
       goto error;
    }
 
@@ -3451,6 +3451,8 @@ egl_image_target_texture(struct gl_context *ctx,
 
    if (tex_storage)
       _mesa_set_texture_view_state(ctx, texObj, target, 1);
+
+   _mesa_update_fbo_texture(ctx, texObj, 0, 0);
 
    _mesa_unlock_texture(ctx, texObj);
 }

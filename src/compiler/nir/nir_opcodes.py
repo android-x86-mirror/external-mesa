@@ -489,7 +489,7 @@ for (int bit = 31; bit >= 0; bit--) {
 
 unop_convert("ifind_msb_rev", tint32, tuint, """
 dst = -1;
-if (src0 != 0 || src0 != -1) {
+if (src0 != 0 && src0 != -1) {
    for (int bit = 0; bit < 31; bit++) {
       /* If src0 < 0, we're looking for the first 0 bit.
        * if src0 >= 0, we're looking for the first 1 bit.
@@ -537,6 +537,7 @@ dst.y = dst.y * (1.0f / ma) + 0.5f;
 """)
 
 unop_horiz("cube_face_index", 1, tfloat32, 3, tfloat32, """
+dst.x = 0.0;
 float absX = fabsf(src0.x);
 float absY = fabsf(src0.y);
 float absZ = fabsf(src0.z);
@@ -770,8 +771,8 @@ binop("uhadd", tuint, _2src_commutative, "(src0 & src1) + ((src0 ^ src1) >> 1)")
 #
 # (x + y + 1) >> 1 = (x | y) + (-(x ^ y) + 1) >> 1)
 #                  = (x | y) -  ((x ^ y)      >> 1)
-binop("irhadd", tint, _2src_commutative, "(src0 | src1) + ((src0 ^ src1) >> 1)")
-binop("urhadd", tuint, _2src_commutative, "(src0 | src1) + ((src0 ^ src1) >> 1)")
+binop("irhadd", tint, _2src_commutative, "(src0 | src1) - ((src0 ^ src1) >> 1)")
+binop("urhadd", tuint, _2src_commutative, "(src0 | src1) - ((src0 ^ src1) >> 1)")
 
 binop("umod", tuint, "", "src1 == 0 ? 0 : src0 % src1")
 
